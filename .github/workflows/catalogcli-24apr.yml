@@ -1,0 +1,33 @@
+# This is a basic workflow to help you get started with Actions
+name: Publish API Catalogs to Exchange
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    # Build Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Install api-catalog cli
+        run: |
+          sudo apt-get update
+          npm install -g api-catalog-cli@latest
+      - name: Publish API to Anypoint Exchange
+        env: 
+          ANYPOINT_CLIENTID: ${{ secrets.ANYPOINT_CLIENTID }} 
+          ANYPOINT_CLIENTSECRET: ${{ secrets.ANYPOINT_CLIENTSECRET }}
+          ANYPOINT_ORG_ID: ${{ secrets.ANYPOINT_ORG_ID }}
+        run: |
+          api-catalog publish-asset --force-update-metadata --organization="c8816973-0064-4b8a-80cb-480706d35c4a" --client_id="deda28841acc4c77bf753103e5053712" --client_secret="3de524d2DDD24e73b51768cfB2029446"
